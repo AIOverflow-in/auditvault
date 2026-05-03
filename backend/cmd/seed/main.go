@@ -79,7 +79,7 @@ func main() {
 			`INSERT INTO users (id, email, name, password_hash, role, organization_id)
 			 VALUES ($1, $2, $3, $4, 'ADMIN', $5)
 			 ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash`,
-			[]any{u(adminUserID), "admin@nivyash.com", "Aman Yadav", adminHash, u(nivyashOrgID)},
+			[]any{u(adminUserID), "admin@nivyash.com", "Yatendra Singh", adminHash, u(nivyashOrgID)},
 		},
 		{
 			`INSERT INTO users (id, email, name, password_hash, role, organization_id)

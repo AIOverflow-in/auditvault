@@ -40,11 +40,15 @@ The viewer's partial grant is the live demo for the per-vessel RBAC requirement.
 
 ## Where to click first
 
-1. Log in as `admin@nivyash.com`. Land on `/dashboard`.
-2. **Clients → Pacific Tankers Pte Ltd** — the Excel-replica table is the headline screen. Try editing remarks, changing a stage, uploading a PDF as the report.
+1. Log in as `admin@nivyash.com`. Sidebar shows three items: **Dashboard**, **Users**, **Audit log**.
+2. **Dashboard** lands on the list of all client companies. Click **Pacific Tankers Pte Ltd** — the Excel-replica table is the headline screen. Try editing remarks, changing a stage, uploading a PDF as the report.
 3. **Users → click the viewer → Manage access** — tick/untick a ship to see the RBAC mechanics live.
-4. **Audit log** (sidebar, admin only) — every mutation you just did is recorded with actor and metadata.
-5. Sign out. Log in as `viewer@pacifictankers.com`. Confirm Ocean Glory does not appear anywhere.
+4. **Audit log** — every mutation you just did is recorded with actor and metadata.
+5. Sign out. Log in as `viewer@pacifictankers.com`. Their **Dashboard** redirects directly to Pacific Tankers' page (only one client = no list step). Confirm Ocean Glory does not appear anywhere.
+
+## File types you can upload
+
+Any file type — PDF, Word, Excel, MP3 (VDR audio), MP4 / MOV (video), images, archives. Hard cap is 10 GB per file. Anything bigger than 50 MiB chunk-uploads in 50 MiB pieces with retry on flaky connections, so multi-GB VDR recordings or surveyor video clips are fine.
 
 ## Useful one-liners
 

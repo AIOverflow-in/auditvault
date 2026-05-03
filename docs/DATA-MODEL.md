@@ -96,7 +96,7 @@ David  (CLIENT_ADMIN,  granted: Pacific Star + Ocean Glory)
 Mei    (CLIENT_VIEWER, granted: Pacific Star only)
    sees: Remote Nav Audit + Ship Recycling Audit (both on Pacific Star)
    NOT : Pre-Purchase Inspection (it's on Ocean Glory) — even though same client
-Aman   (ADMIN at Nivyash, no grants needed)
+Yatendra (ADMIN at Nivyash, no grants needed)
    sees: everything across every client
 ```
 

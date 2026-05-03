@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, Plus, Ship, Users } from 'lucide-react';
+import { ChevronRight, Plus, Ship, Users } from 'lucide-react';
 import { fetchAPI, requireRole } from '@/lib/session';
 import { ROLE_LABELS } from '@/lib/labels';
 import ProjectsTable, { ProjectRow } from './projects-table';
@@ -26,19 +26,34 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
   ]);
 
   return (
-    <div className="space-y-8">
-      <header className="space-y-3">
-        <Link href="/clients" className="inline-flex items-center gap-2 text-base font-semibold text-teal-700 hover:underline">
-          <ArrowLeft className="h-5 w-5" aria-hidden /> Back to clients
-        </Link>
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-10">
+      <header className="space-y-4">
+        {/* Breadcrumb — small text, navigates back to dashboard. */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-navy-600">
+          <Link href="/dashboard" className="font-semibold text-teal-700 hover:underline">
+            Dashboard
+          </Link>
+          <ChevronRight className="h-4 w-4 text-navy-300" aria-hidden />
+          <span className="font-semibold text-navy-700">{client.name}</span>
+        </nav>
+
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-navy-900">{client.name}</h1>
-            <p className="text-navy-700">
-              {client.vesselCount} {client.vesselCount === 1 ? 'ship' : 'ships'} · {projects.length}{' '}
-              {projects.length === 1 ? 'project' : 'projects'} · {client.userCount}{' '}
-              {client.userCount === 1 ? 'user' : 'users'}
-            </p>
+            <p className="av-eyebrow">Client</p>
+            <h1 className="av-hero-title mt-2">{client.name}</h1>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="av-pill">
+                <Ship className="h-3.5 w-3.5" aria-hidden />
+                {client.vesselCount} {client.vesselCount === 1 ? 'ship' : 'ships'}
+              </span>
+              <span className="av-pill-teal">
+                {projects.length} {projects.length === 1 ? 'project' : 'projects'}
+              </span>
+              <span className="av-pill">
+                <Users className="h-3.5 w-3.5" aria-hidden />
+                {client.userCount} {client.userCount === 1 ? 'user' : 'users'}
+              </span>
+            </div>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href={`/vessels/new?clientId=${client.id}`} className="av-btn-secondary">
