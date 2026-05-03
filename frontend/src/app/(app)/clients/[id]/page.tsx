@@ -69,7 +69,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
       </header>
 
       {/* Excel-replica table */}
-      <ProjectsTable initialProjects={projects} />
+      <ProjectsTable initialProjects={projects} clientName={client.name} />
 
       {/* Ships panel */}
       <section className="av-card p-6">
