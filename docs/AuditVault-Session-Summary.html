@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a2e; background: #fff; }
+
+  .cover {
+    background: linear-gradient(135deg, #0f1f35 0%, #1e3a5f 60%, #0d9488 100%);
+    color: white;
+    padding: 80px 60px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+  .cover h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; }
+  .cover h1 span { color: #2dd4bf; }
+  .cover-sub { font-size: 16px; color: rgba(255,255,255,0.7); margin-top: 12px; }
+  .cover-meta { margin-top: 28px; display: flex; gap: 32px; }
+  .cover-meta div { }
+  .cover-meta .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); }
+  .cover-meta .value { font-size: 14px; font-weight: 600; margin-top: 2px; }
+
+  .body { padding: 48px 60px; max-width: 900px; margin: 0 auto; }
+
+  h2 {
+    font-size: 22px; font-weight: 700; color: #0f1f35;
+    border-bottom: 2px solid #0d9488;
+    padding-bottom: 8px; margin: 40px 0 20px;
+  }
+  h3 { font-size: 15px; font-weight: 700; color: #1e3a5f; margin: 20px 0 8px; }
+  p { font-size: 13.5px; line-height: 1.7; color: #374151; margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { font-size: 13.5px; line-height: 1.8; color: #374151; }
+
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card-title { font-size: 13px; font-weight: 700; color: #0f1f35; margin-bottom: 6px; }
+  .card p { margin: 0; font-size: 13px; color: #6b7280; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
+  th { background: #0f1f35; color: white; padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; }
+  td { padding: 9px 14px; border-bottom: 1px solid #f1f5f9; color: #374151; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-teal { background: #ccfbf1; color: #0f766e; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-orange { background: #ffedd5; color: #c2410c; }
+  .badge-purple { background: #f3e8ff; color: #7e22ce; }
+  .badge-gray { background: #f3f4f6; color: #4b5563; }
+
+  .cred-box {
+    background: #0f1f35;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .cred-box p { color: #94a3b8; font-size: 12px; margin-bottom: 4px; }
+  .cred-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .cred-email { color: #e2e8f0; font-size: 13px; font-weight: 500; }
+  .cred-pass { color: #2dd4bf; font-size: 13px; font-family: monospace; }
+
+  .phase {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 16px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px;
+  }
+  .phase-num {
+    width: 32px; height: 32px; border-radius: 50%; background: #0d9488;
+    color: white; font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .phase-content h3 { margin: 0 0 4px; font-size: 14px; color: #0f1f35; }
+  .phase-content p { margin: 0; font-size: 12.5px; color: #6b7280; }
+
+  .stage-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .stage-item {
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-radius: 6px; padding: 4px 10px;
+    font-size: 11px; color: #374151;
+  }
+  .stage-arrow { color: #0d9488; font-size: 14px; align-self: center; }
+
+  .highlight-box {
+    border-left: 4px solid #0d9488;
+    background: #f0fdfa;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 16px;
+  }
+  .highlight-box p { margin: 0; font-size: 13px; color: #134e4a; }
+
+  .footer {
+    background: #0f1f35;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 24px;
+    font-size: 11px;
+    margin-top: 60px;
+  }
+  .footer strong { color: white; }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-badge">Project Documentation</div>
+  <h1>Audit<span>Vault</span>.ai</h1>
+  <p class="cover-sub">Maritime Audit Management Platform — Development Session Summary</p>
+  <div class="cover-meta">
+    <div>
+      <div class="label">Company</div>
+      <div class="value">Nivyash Maritime Consultancy</div>
+    </div>
+    <div>
+      <div class="label">Date</div>
+      <div class="value">2 May 2026</div>
+    </div>
+    <div>
+      <div class="label">Version</div>
+      <div class="value">Prototype v0.1</div>
+    </div>
+    <div>
+      <div class="label">GitHub</div>
+      <div class="value">github.com/aman468/auditvault</div>
+    </div>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- 1. BACKGROUND -->
+  <h2>1. Background &amp; Problem Statement</h2>
+  <p>Nivyash is a maritime consultancy that conducts a range of audits and inspections for vessel operators globally. Services include Internal Audits &amp; Training, Remote Navigation Audits (VDR-based), Maritime Incident Investigations, Pre-Purchase Inspections, and Ship Recycling Audits.</p>
+  <p>Prior to this platform, all project coordination happened via email and WeTransfer. Files arrived in multiple formats (audio VDR recordings, video, scanned PDFs, Word documents) with no centralised view of what was active, and clients had no self-service access to their data or reports.</p>
+
+  <div class="highlight-box">
+    <p><strong>Goal:</strong> Build a cloud-based web platform called AuditVault.ai that gives Nivyash full operational visibility and gives each client company (vessel managers) controlled, secure access to only their vessels and projects — replacing email and WeTransfer entirely.</p>
+  </div>
+
+  <!-- 2. WHAT WAS BUILT -->
+  <h2>2. What Was Built</h2>
+  <p>A complete full-stack web application was designed, architected, and built from scratch in a single session. The prototype covers the entire Phase 1 scope from the plan.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">🔐 Authentication</div>
+      <p>Email/password login with JWT sessions. Role-based access enforced on every page and API route.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Dashboard</div>
+      <p>Role-aware overview with stats cards, recent projects feed, and upcoming schedule panel.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🚢 Vessel Registry</div>
+      <p>Register vessels with IMO number, flag, type, and client company. Full project history per vessel.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📁 Project Management</div>
+      <p>Create and track audit projects through an 8-stage lifecycle with visual progress tracker.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📎 File Vault</div>
+      <p>Upload PDFs, Word docs, audio, video, and images per project. Categorised by type. Role-filtered downloads.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🏢 Client Portal</div>
+      <p>Clients see only their vessels. Final reports visible; internal notes and raw data hidden.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">👥 User Management</div>
+      <p>Full user table across all organisations (admin only). 4 roles with granular permissions.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📝 Internal Notes</div>
+      <p>Nivyash staff can add internal notes per project. Completely hidden from client users.</p>
+    </div>
+  </div>
+
+  <!-- 3. PROJECT LIFECYCLE -->
+  <h2>3. Project Lifecycle (8 Stages)</h2>
+  <p>Every audit project moves through a defined pipeline. Staff can update the stage from the project detail page; each change is logged to the audit trail.</p>
+  <div class="stage-row">
+    <div class="stage-item">1. Enquiry</div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-item">2. Confirmed</div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-item">3. Data Collection</div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-item">4. Analysis</div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-item">5. Report Draft</div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-item">6. Report Submitted</div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-item">7. Awaiting Feedback</div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-item">8. Completed</div>
+  </div>
+
+  <!-- 4. AUDIT TYPES -->
+  <h2>4. Audit &amp; Inspection Types</h2>
+  <table>
+    <tr><th>Code</th><th>Full Name</th></tr>
+    <tr><td><span class="badge badge-blue">INTERNAL_AUDIT</span></td><td>Internal Audit &amp; Training</td></tr>
+    <tr><td><span class="badge badge-teal">REMOTE_NAV_AUDIT</span></td><td>Remote Navigation Audit (VDR-based)</td></tr>
+    <tr><td><span class="badge badge-orange">INCIDENT_INVESTIGATION</span></td><td>Maritime Incident Investigation</td></tr>
+    <tr><td><span class="badge badge-purple">PRE_PURCHASE_INSPECTION</span></td><td>Pre-Purchase Inspection</td></tr>
+    <tr><td><span class="badge badge-gray">SHIP_RECYCLING_AUDIT</span></td><td>Ship Recycling Audit</td></tr>
+  </table>
+
+  <!-- 5. USER ROLES -->
+  <h2>5. User Roles &amp; Permissions</h2>
+  <table>
+    <tr><th>Role</th><th>Who</th><th>Access</th></tr>
+    <tr><td><span class="badge badge-purple">ADMIN</span></td><td>Nivyash owner/manager</td><td>Everything — all clients, vessels, projects, users, audit log</td></tr>
+    <tr><td><span class="badge badge-blue">STAFF</span></td><td>Nivyash surveyors</td><td>All projects; can upload files, change stages, add notes</td></tr>
+    <tr><td><span class="badge badge-teal">CLIENT_ADMIN</span></td><td>Vessel manager</td><td>Their company's vessels &amp; projects; can upload feedback; download final reports</td></tr>
+    <tr><td><span class="badge badge-gray">CLIENT_VIEWER</span></td><td>Client read-only user</td><td>Same as CLIENT_ADMIN but cannot upload</td></tr>
+  </table>
+
+  <!-- 6. TECH STACK -->
+  <h2>6. Technology Stack</h2>
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Frontend</div>
+      <p>Next.js 14 (App Router)<br>TypeScript<br>Tailwind CSS</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Backend</div>
+      <p>Next.js API Routes<br>NextAuth.js v4<br>bcryptjs</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Database</div>
+      <p>SQLite (local dev)<br>PostgreSQL (production)<br>Prisma ORM</p>
+    </div>
+    <div class="card">
+      <div class="card-title">File Storage</div>
+      <p>Local /uploads (prototype)<br>→ OneDrive via MS Graph API (Phase 2)</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Version Control</div>
+      <p>Git<br>GitHub<br>github.com/aman468/auditvault</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Production Target</div>
+      <p>Vercel (frontend)<br>Neon PostgreSQL (database)</p>
+    </div>
+  </div>
+
+  <!-- 7. DATA MODEL -->
+  <h2>7. Core Data Model</h2>
+  <table>
+    <tr><th>Table</th><th>Key Fields</th></tr>
+    <tr><td><strong>Organization</strong></td><td>id, name, type (NIVYASH / CLIENT)</td></tr>
+    <tr><td><strong>Vessel</strong></td><td>id, name, imoNumber, flag, vesselType, organizationId</td></tr>
+    <tr><td><strong>User</strong></td><td>id, email, name, role, organizationId</td></tr>
+    <tr><td><strong>Project</strong></td><td>id, vesselId, projectType, region, proposedDate, stage, remarks</td></tr>
+    <tr><td><strong>ProjectFile</strong></td><td>id, projectId, fileName, fileType, category, filePath</td></tr>
+    <tr><td><strong>ProjectNote</strong></td><td>id, projectId, body, authorId (internal only)</td></tr>
+    <tr><td><strong>AuditLog</strong></td><td>id, userId, action, entityType, entityId (every stage change logged)</td></tr>
+  </table>
+
+  <!-- 8. DEMO DATA -->
+  <h2>8. Demo Data (Pre-loaded)</h2>
+  <div class="grid2">
+    <div>
+      <h3>Client Companies</h3>
+      <ul>
+        <li>Pacific Tankers Pte Ltd (2 vessels)</li>
+        <li>Nordic Bulk Carriers AS (2 vessels)</li>
+      </ul>
+      <h3 style="margin-top:16px">Vessels</h3>
+      <ul>
+        <li>Pacific Star — IMO 9876543, VLCC Tanker</li>
+        <li>Ocean Glory — IMO 9123456, Aframax Tanker</li>
+        <li>Nordic Eagle — IMO 9654321, Bulk Carrier</li>
+        <li>Fjord Spirit — IMO 9789012, Bulk Carrier</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Sample Projects</h3>
+      <ul>
+        <li>Pacific Star — Remote Nav Audit (Data Collection)</li>
+        <li>Ocean Glory — Pre-Purchase Inspection (Confirmed)</li>
+        <li>Nordic Eagle — Internal Audit (Report Submitted)</li>
+        <li>Fjord Spirit — Incident Investigation (Completed)</li>
+        <li>Pacific Star — Ship Recycling Audit (Enquiry)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 9. LOGIN CREDENTIALS -->
+  <h2>9. Login Credentials</h2>
+  <div class="cred-box">
+    <div class="cred-row">
+      <div>
+        <p>Nivyash Admin (full access)</p>
+        <div class="cred-email">admin@nivyash.com</div>
+      </div>
+      <div class="cred-pass">admin123</div>
+    </div>
+    <div class="cred-row">
+      <div>
+        <p>Nivyash Staff</p>
+        <div class="cred-email">staff@nivyash.com</div>
+      </div>
+      <div class="cred-pass">staff123</div>
+    </div>
+    <div class="cred-row">
+      <div>
+        <p>Client — Pacific Tankers (Admin)</p>
+        <div class="cred-email">manager@pacifictankers.com</div>
+      </div>
+      <div class="cred-pass">client123</div>
+    </div>
+    <div class="cred-row" style="margin-bottom:0">
+      <div>
+        <p>Client — Nordic Bulk (Admin)</p>
+        <div class="cred-email">ops@nordicbulk.com</div>
+      </div>
+      <div class="cred-pass">client123</div>
+    </div>
+  </div>
+
+  <!-- 10. ROADMAP -->
+  <h2>10. Development Roadmap</h2>
+
+  <div class="phase">
+    <div class="phase-num">✓</div>
+    <div class="phase-content">
+      <h3>Phase 1 — Core Platform (Complete)</h3>
+      <p>Auth, vessel registry, client orgs, project CRUD, 8-stage lifecycle, file upload, internal notes, role-based access, admin dashboard, audit log.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-num">2</div>
+    <div class="phase-content">
+      <h3>Phase 2 — Client Portal &amp; OneDrive Integration</h3>
+      <p>Microsoft Graph API for file storage to existing OneDrive. Structured folder hierarchy per client/vessel/project. Email notifications on key stage changes (Resend). Client-facing dashboard polish.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-num">3</div>
+    <div class="phase-content">
+      <h3>Phase 3 — Polish &amp; Production</h3>
+      <p>Kanban pipeline with drag-and-drop stage updates. Advanced dashboard filters. Mobile-responsive pass. Bulk CSV import of historical data. Inline PDF preview and audio player for VDR recordings. Deploy to Vercel + Neon PostgreSQL.</p>
+    </div>
+  </div>
+
+  <!-- 11. HOW TO RUN -->
+  <h2>11. How to Run Locally</h2>
+  <table>
+    <tr><th>Step</th><th>Command</th></tr>
+    <tr><td>Install dependencies</td><td><code>npm install</code></td></tr>
+    <tr><td>Create database</td><td><code>DATABASE_URL="file:./dev.db" npx prisma db push</code></td></tr>
+    <tr><td>Seed demo data</td><td><code>DATABASE_URL="file:./dev.db" npx ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed.ts</code></td></tr>
+    <tr><td>Start dev server</td><td><code>npm run dev</code></td></tr>
+    <tr><td>Open in browser</td><td><code>http://localhost:3000</code></td></tr>
+  </table>
+
+  <p style="color:#6b7280; font-size:12px;">Project directory: <code>/Users/amanyadav/Desktop/Audit_Vault-Nivyash/auditvault</code></p>
+  <p style="color:#6b7280; font-size:12px;">GitHub repository: <code>git@github.com:aman468/auditvault.git</code></p>
+
+</div>
+
+<div class="footer">
+  <strong>AuditVault.ai</strong> — Maritime Audit Management Platform &nbsp;·&nbsp;
+  Developed for <strong>Nivyash Maritime Consultancy</strong> &nbsp;·&nbsp;
+  Prototype v0.1 &nbsp;·&nbsp; May 2026
+</div>
+
+</body>
+</html>

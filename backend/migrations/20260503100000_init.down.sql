@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS settings;
+DROP TABLE IF EXISTS audit_logs;
+DROP TABLE IF EXISTS project_notes;
+DROP TABLE IF EXISTS project_files;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS vessels;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS organizations;

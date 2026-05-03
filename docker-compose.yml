@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: auditvault-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-auditvault}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-auditvault}
+      POSTGRES_DB: ${POSTGRES_DB:-auditvault}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./.postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-auditvault}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5

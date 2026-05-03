@@ -1,0 +1,38 @@
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Backend
+backend/bin/
+backend/server
+backend/coverage.out
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/coverage/
+frontend/.vercel
+frontend/next-env.d.ts
+frontend/tsconfig.tsbuildinfo
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Postgres data (if mounted locally)
+.postgres-data/
+
+# Local scratch / paste-in notes (may contain secrets)
+rought.txt
+**/rought.txt
+*.scratch
+secrets.md
