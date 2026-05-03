@@ -131,6 +131,7 @@ Full step-by-step in [docs/RUN.md](docs/RUN.md). End-to-end test plan with R2/S3
 
 ## Documentation
 
+- [docs/DATA-MODEL.md](docs/DATA-MODEL.md) — Client → Ship → Project → File chain, per-ship RBAC, visibility rules.
 - [docs/RUN.md](docs/RUN.md) — day-to-day run cheat sheet, demo logins, common operations.
 - [docs/QA-GUIDE.md](docs/QA-GUIDE.md) — end-to-end test plan + provisioning steps for a fresh environment.
 - [docs/AuditVault-Developer-Plan.md](docs/AuditVault-Developer-Plan.md) — original PRD.
