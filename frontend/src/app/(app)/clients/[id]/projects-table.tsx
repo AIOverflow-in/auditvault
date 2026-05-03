@@ -33,6 +33,11 @@ export type ProjectRow = {
   feedback: FileBrief[] | null;
 };
 
+// Column order intentionally mirrors docs/IM-NIVYASH AUDIT VAULT DASHBOARD.xlsx
+// 1:1 — that's the spreadsheet the captain uses today and the headline brief
+// was "exactly the same columns". The Excel reserves three "Report uploaded"
+// slots, with the first explicitly noted as accepting either a PDF or audio
+// (VDR recording). Don't reorder these without checking the source xlsx.
 export default function ProjectsTable({ initialProjects }: { initialProjects: ProjectRow[] }) {
   const router = useRouter();
   const [projects, setProjects] = useState(initialProjects);
@@ -48,6 +53,14 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
 
   function patchRow(id: string, patch: Partial<ProjectRow>) {
     setProjects((curr) => curr.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  }
+
+  function appendReport(id: string, file: FileBrief) {
+    setProjects((curr) =>
+      curr.map((p) =>
+        p.id === id ? { ...p, finalReports: [...(p.finalReports ?? []), file] } : p,
+      ),
+    );
   }
 
   async function changeStage(p: ProjectRow, stage: string) {
@@ -76,22 +89,34 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
         <table className="w-full text-base">
           <thead>
             <tr className="border-b border-navy-100 bg-navy-50 text-left text-sm font-semibold uppercase tracking-wider text-navy-700">
-              <th className="px-4 py-3">#</th>
+              <th className="px-4 py-3">Sr no</th>
               <th className="px-4 py-3">Ship name</th>
               <th className="px-4 py-3">Project type</th>
-              <th className="px-4 py-3">Proposed date</th>
-              <th className="px-4 py-3">Region</th>
-              <th className="px-4 py-3">Stage</th>
-              <th className="px-4 py-3">Report uploaded</th>
+              <th className="px-4 py-3">Proposed region</th>
+              <th className="px-4 py-3">Proposed dates</th>
+              <th className="px-4 py-3">Project stage</th>
+              <th className="px-4 py-3">
+                Report uploaded 1
+                <span className="block text-[11px] font-medium normal-case tracking-normal text-navy-600">
+                  pdf or audio
+                </span>
+              </th>
+              <th className="px-4 py-3">Report uploaded 2</th>
+              <th className="px-4 py-3">Report uploaded 3</th>
+              <th className="px-4 py-3">
+                Feedback from ship
+                <span className="block text-[11px] font-medium normal-case tracking-normal text-navy-600">
+                  pdf upload
+                </span>
+              </th>
               <th className="px-4 py-3">Remarks by company</th>
-              <th className="px-4 py-3">Feedback from ship</th>
               <th className="px-4 py-3 sr-only">Open</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-navy-100">
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-6 py-10 text-center text-navy-700">
+                <td colSpan={12} className="px-6 py-10 text-center text-navy-700">
                   No projects yet. Use “New project” to add one.
                 </td>
               </tr>
@@ -104,16 +129,22 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
                     {p.vesselName}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-navy-800">{PROJECT_TYPE_LABELS[p.projectType] ?? p.projectType}</td>
-                <td className="whitespace-nowrap px-4 py-3 text-navy-800">{p.proposedDate || '—'}</td>
+                <td className="px-4 py-3 text-navy-800">
+                  {PROJECT_TYPE_LABELS[p.projectType] ?? p.projectType}
+                </td>
                 <td className="px-4 py-3 text-navy-800">{p.region || '—'}</td>
+                <td className="whitespace-nowrap px-4 py-3 text-navy-800">{p.proposedDate || '—'}</td>
                 <td className="px-4 py-3">
-                  <label className="sr-only" htmlFor={`stage-${p.id}`}>Stage</label>
+                  <label className="sr-only" htmlFor={`stage-${p.id}`}>
+                    Stage
+                  </label>
                   <select
                     id={`stage-${p.id}`}
                     value={p.stage}
                     onChange={(e) => changeStage(p, e.target.value)}
-                    className={`min-h-tap rounded-lg border border-navy-200 bg-white px-3 text-base font-semibold ${STAGE_BADGE[p.stage] ?? ''}`}
+                    className={`min-h-tap rounded-lg border border-navy-200 bg-white px-3 text-base font-semibold ${
+                      STAGE_BADGE[p.stage] ?? ''
+                    }`}
                   >
                     {STAGES.map((s) => (
                       <option key={s} value={s}>
@@ -123,13 +154,22 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
                   </select>
                 </td>
                 <td className="px-4 py-3">
-                  <ReportCell project={p} onChange={(report) => patchRow(p.id, { finalReports: [report] })} />
+                  <ReportCell project={p} slotIndex={0} onChange={(f) => appendReport(p.id, f)} />
+                </td>
+                <td className="px-4 py-3">
+                  <ReportCell project={p} slotIndex={1} onChange={(f) => appendReport(p.id, f)} />
+                </td>
+                <td className="px-4 py-3">
+                  <ReportCell project={p} slotIndex={2} onChange={(f) => appendReport(p.id, f)} />
+                </td>
+                <td className="px-4 py-3">
+                  <FeedbackCell
+                    project={p}
+                    onChange={(file) => patchRow(p.id, { feedback: [...(p.feedback ?? []), file] })}
+                  />
                 </td>
                 <td className="px-4 py-3 min-w-[18rem]">
                   <RemarksCell project={p} onChange={(remarks) => patchRow(p.id, { remarks })} />
-                </td>
-                <td className="px-4 py-3">
-                  <FeedbackCell project={p} onChange={(file) => patchRow(p.id, { feedback: [...(p.feedback ?? []), file] })} />
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-right">
                   <Link
