@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ArrowLeft, Ship, FileText, MessageSquare } from 'lucide-react';
 import { fetchAPI, requireSession } from '@/lib/session';
 import { isClientRole, isNivyashRole, PROJECT_TYPE_LABELS, STAGE_BADGE, STAGE_LABELS, STAGES } from '@/lib/labels';
@@ -29,16 +30,23 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
   const canEdit = isNivyashRole(session.user.role);
   const isClient = isClientRole(session.user.role);
 
-  const [{ project }, filesData, notesData] = await Promise.all([
+  // The project fetch must be allowed to fail cleanly: when a client user
+  // URL-picks a project on a vessel they do not have a grant on, the API
+  // returns 404 and our fetchAPI throws. allSettled lets us catch that and
+  // call notFound() instead of crashing the route into a 500.
+  const [projectRes, filesRes, notesRes] = await Promise.allSettled([
     fetchAPI<{ project: Project }>(`/projects/${params.id}`),
-    fetchAPI<{ files: ProjectFile[] }>(`/projects/${params.id}/files`).catch(() => ({ files: [] })),
+    fetchAPI<{ files: ProjectFile[] }>(`/projects/${params.id}/files`),
     isClient
       ? Promise.resolve({ notes: [] as Note[] })
-      : fetchAPI<{ notes: Note[] }>(`/projects/${params.id}/notes`).catch(() => ({ notes: [] })),
+      : fetchAPI<{ notes: Note[] }>(`/projects/${params.id}/notes`),
   ]);
 
-  const files = filesData.files ?? [];
-  const notes = notesData.notes ?? [];
+  if (projectRes.status !== 'fulfilled') notFound();
+
+  const { project } = projectRes.value;
+  const files = filesRes.status === 'fulfilled' ? (filesRes.value.files ?? []) : [];
+  const notes = notesRes.status === 'fulfilled' ? (notesRes.value.notes ?? []) : [];
   const stageIdx = STAGES.indexOf(project.stage);
 
   return (

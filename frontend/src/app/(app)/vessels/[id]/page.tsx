@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ArrowLeft, Plus, Ship, FolderKanban } from 'lucide-react';
 import { fetchAPI, requireSession } from '@/lib/session';
 import { isNivyashRole, PROJECT_TYPE_LABELS, STAGE_BADGE, STAGE_LABELS } from '@/lib/labels';
@@ -27,11 +28,16 @@ export default async function VesselDetailPage({ params }: { params: { id: strin
   const session = await requireSession();
   const canCreate = isNivyashRole(session.user.role);
 
-  const [{ vessel }, projData] = await Promise.all([
+  // Same reasoning as projects/[id]: a client user URL-picking a vessel
+  // they aren't granted access to must hit a clean 404, not a 500. Wrap
+  // the vessel fetch in allSettled and surface notFound() on failure.
+  const [vesselRes, projData] = await Promise.allSettled([
     fetchAPI<{ vessel: Vessel }>(`/vessels/${params.id}`),
-    fetchAPI<{ projects: Project[] }>(`/projects?vesselId=${params.id}`).catch(() => ({ projects: [] })),
+    fetchAPI<{ projects: Project[] }>(`/projects?vesselId=${params.id}`),
   ]);
-  const projects = projData.projects ?? [];
+  if (vesselRes.status !== 'fulfilled') notFound();
+  const { vessel } = vesselRes.value;
+  const projects = projData.status === 'fulfilled' ? (projData.value.projects ?? []) : [];
 
   return (
     <div className="space-y-8">
