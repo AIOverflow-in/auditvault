@@ -36,3 +36,6 @@ rought.txt
 **/rought.txt
 *.scratch
 secrets.md
+
+# Local agent state
+.claude/
