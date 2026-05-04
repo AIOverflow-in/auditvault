@@ -279,9 +279,17 @@ func (a *API) GetProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	c, _ := auth.FromContext(r.Context())
+	// SECURITY: client users must have an explicit per-vessel grant. Old code
+	// here checked organisation-level scoping only — that let a CLIENT_VIEWER
+	// on a multi-ship company read projects on ships the admin had not
+	// granted them. Use the same per-vessel access check used by the file
+	// and list endpoints.
 	if auth.IsClientRole(c.Role) {
-		oid, _ := uuidFromPg(p.OrganizationID)
-		if oid != c.OrganizationID {
+		ok, err := a.DB.Queries.UserHasVesselAccess(r.Context(), sqlc.UserHasVesselAccessParams{
+			UserID:   db.UUID(c.UserID),
+			VesselID: p.VesselID,
+		})
+		if err != nil || !ok {
 			httpx.WriteError(w, http.StatusNotFound, "not found")
 			return
 		}
