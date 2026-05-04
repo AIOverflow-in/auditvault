@@ -41,7 +41,15 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
   ]);
 
   if (clientRes.status !== 'fulfilled') notFound();
-  const client = clientRes.value;
+  // Defend against the API returning null for either list. The backend now
+  // pre-initialises empty slices, but `?? []` here is the belt-and-braces
+  // version so we never crash a freshly-created client's detail page.
+  const rawClient = clientRes.value;
+  const client: Client = {
+    ...rawClient,
+    vessels: rawClient.vessels ?? [],
+    users: rawClient.users ?? [],
+  };
   const projects = projectsRes.status === 'fulfilled' ? projectsRes.value : [];
 
   return (

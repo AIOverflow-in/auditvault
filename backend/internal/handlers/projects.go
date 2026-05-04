@@ -139,7 +139,15 @@ func (a *API) ListProjects(w http.ResponseWriter, r *http.Request) {
 	isClient := auth.IsClientRole(c.Role)
 	out := make([]projectRowDTO, 0, len(rows))
 	for _, p := range rows {
-		row := projectRowDTO{projectDTO: dtoFromAllProjectsRow(p, isClient)}
+		// Pre-initialise the inline file slices so JSON marshals them as []
+		// (not null) when a project has no reports / no feedback yet. The
+		// frontend already defends with `?? []`, but consistent shapes save
+		// future surprises.
+		row := projectRowDTO{
+			projectDTO:   dtoFromAllProjectsRow(p, isClient),
+			FinalReports: []fileBriefDTO{},
+			Feedback:     []fileBriefDTO{},
+		}
 		for _, f := range byProject[db.UUIDString(p.ID)] {
 			brief := fileBriefDTO{
 				ID:        db.UUIDString(f.ID),

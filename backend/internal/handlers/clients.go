@@ -146,17 +146,14 @@ func (a *API) GetClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := clientDetailDTO{
-		clientDTO: clientDTO{
-			ID:          db.UUIDString(org.ID),
-			Name:        org.Name,
-			Type:        org.Type,
-			VesselCount: len(vesselsList),
-			UserCount:   len(users),
-		},
-	}
+	// Build the slices with make() so empty results serialise as [] rather
+	// than null. A brand-new client has no vessels and no users; if the
+	// fields end up nil here, JSON marshalling emits `null` and the
+	// frontend's client.vessels.length crashes the /clients/[id] page.
+	// (This is exactly what bricked the customer's "Add client" flow.)
+	vessels := make([]vesselDTO, 0, len(vesselsList))
 	for _, v := range vesselsList {
-		resp.Vessels = append(resp.Vessels, vesselDTO{
+		vessels = append(vessels, vesselDTO{
 			ID:               db.UUIDString(v.ID),
 			Name:             v.Name,
 			IMONumber:        db.PtrString(v.ImoNumber),
@@ -166,13 +163,25 @@ func (a *API) GetClient(w http.ResponseWriter, r *http.Request) {
 			OrganizationName: v.OrganizationName,
 		})
 	}
+	clientUsers := make([]userBrief, 0, len(users))
 	for _, u := range users {
-		resp.Users = append(resp.Users, userBrief{
+		clientUsers = append(clientUsers, userBrief{
 			ID:    db.UUIDString(u.ID),
 			Name:  u.Name,
 			Email: u.Email,
 			Role:  u.Role,
 		})
+	}
+	resp := clientDetailDTO{
+		clientDTO: clientDTO{
+			ID:          db.UUIDString(org.ID),
+			Name:        org.Name,
+			Type:        org.Type,
+			VesselCount: len(vesselsList),
+			UserCount:   len(users),
+		},
+		Vessels: vessels,
+		Users:   clientUsers,
 	}
 	httpx.WriteJSON(w, http.StatusOK, map[string]any{"client": resp})
 }
