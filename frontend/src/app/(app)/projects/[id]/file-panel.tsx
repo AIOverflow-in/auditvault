@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Download, Trash2, Upload, FileText } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 import { FILE_CATEGORIES, FILE_CATEGORY_LABELS } from '@/lib/labels';
 import { uploadProjectFile, type UploadCategory } from '@/lib/upload';
 
@@ -74,7 +74,7 @@ export default function FilePanel({
     if (!confirm('Delete this file? It will be removed from the project. Admins can restore it later.')) {
       return;
     }
-    const res = await fetch(`${API_URL}/projects/${projectId}/files/${fileId}`, {
+    const res = await fetch(`${BROWSER_API_URL}/projects/${projectId}/files/${fileId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -154,7 +154,7 @@ export default function FilePanel({
                 </p>
               </div>
               <a
-                href={`${API_URL}/projects/${projectId}/files/${f.id}/download`}
+                href={`${BROWSER_API_URL}/projects/${projectId}/files/${f.id}/download`}
                 target="_blank"
                 rel="noopener"
                 className="av-btn-secondary"

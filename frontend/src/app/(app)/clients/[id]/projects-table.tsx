@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { PROJECT_TYPE_LABELS, STAGE_BADGE, STAGE_LABELS, STAGES } from '@/lib/labels';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 import RemarksCell from './remarks-cell';
 import ReportCell from './report-cell';
 import FeedbackCell from './feedback-cell';
@@ -105,7 +105,7 @@ export default function ProjectsTable({
   async function changeStage(p: ProjectRow, stage: string) {
     const previous = p.stage;
     patchRow(p.id, { stage });
-    const res = await fetch(`${API_URL}/projects/${p.id}/stage`, {
+    const res = await fetch(`${BROWSER_API_URL}/projects/${p.id}/stage`, {
       method: 'PATCH',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },

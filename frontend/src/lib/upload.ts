@@ -13,7 +13,7 @@
 // The browser must be allowed to read the ETag response header — make sure
 // the R2 bucket's CORS policy includes "ExposeHeaders": ["ETag"].
 
-import { API_URL } from './api';
+import { BROWSER_API_URL } from './api';
 
 export type UploadCategory = 'RAW_DATA' | 'DRAFT_REPORT' | 'FINAL_REPORT' | 'FEEDBACK' | 'OTHER';
 
@@ -45,7 +45,7 @@ export async function uploadProjectFile(
   onProgress?: ProgressFn,
 ): Promise<UploadResult> {
   // 1. Init
-  const initRes = await fetch(`${API_URL}/projects/${projectId}/files/upload-init`, {
+  const initRes = await fetch(`${BROWSER_API_URL}/projects/${projectId}/files/upload-init`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -86,7 +86,7 @@ export async function uploadProjectFile(
   } catch (err) {
     // Best-effort cleanup so the server doesn't keep a zombie pending row.
     try {
-      await fetch(`${API_URL}/projects/${projectId}/files/${init.fileId}/abort`, {
+      await fetch(`${BROWSER_API_URL}/projects/${projectId}/files/${init.fileId}/abort`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -97,7 +97,7 @@ export async function uploadProjectFile(
   }
 
   // 3. Complete
-  const completeRes = await fetch(`${API_URL}/projects/${projectId}/files/${init.fileId}/complete`, {
+  const completeRes = await fetch(`${BROWSER_API_URL}/projects/${projectId}/files/${init.fileId}/complete`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -157,7 +157,7 @@ async function putPartWithRetry(args: PutArgs): Promise<string> {
 
 async function refreshPartURL(projectId: string, fileId: string, partNumber: number): Promise<string> {
   const res = await fetch(
-    `${API_URL}/projects/${projectId}/files/${fileId}/parts/${partNumber}/url`,
+    `${BROWSER_API_URL}/projects/${projectId}/files/${fileId}/parts/${partNumber}/url`,
     { credentials: 'include' },
   );
   if (!res.ok) throw new Error('Could not refresh upload URL.');

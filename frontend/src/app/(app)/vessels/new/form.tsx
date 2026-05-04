@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 
 export default function NewVesselForm({
   clients,
@@ -25,7 +25,7 @@ export default function NewVesselForm({
     e.preventDefault();
     setError(null);
     start(async () => {
-      const res = await fetch(`${API_URL}/vessels`, {
+      const res = await fetch(`${BROWSER_API_URL}/vessels`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

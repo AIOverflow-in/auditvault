@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 import { STAGE_LABELS, STAGES } from '@/lib/labels';
 
 export default function StageUpdater({
@@ -23,7 +23,7 @@ export default function StageUpdater({
     setStage(next);
     setError(null);
     start(async () => {
-      const res = await fetch(`${API_URL}/projects/${projectId}/stage`, {
+      const res = await fetch(`${BROWSER_API_URL}/projects/${projectId}/stage`, {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

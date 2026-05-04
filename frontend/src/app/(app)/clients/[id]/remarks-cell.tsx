@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Check, Pencil, X } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 import type { ProjectRow } from './projects-table';
 
 export default function RemarksCell({
@@ -20,7 +20,7 @@ export default function RemarksCell({
   async function save() {
     setSaving(true);
     setError(null);
-    const res = await fetch(`${API_URL}/projects/${project.id}/remarks`, {
+    const res = await fetch(`${BROWSER_API_URL}/projects/${project.id}/remarks`, {
       method: 'PATCH',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },

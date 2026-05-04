@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 
 export type Vessel = {
   id: string;
@@ -45,7 +45,7 @@ export default function GrantsEditor({
     setError(null);
     setSavedAt(null);
     start(async () => {
-      const res = await fetch(`${API_URL}/users/${userId}/vessels`, {
+      const res = await fetch(`${BROWSER_API_URL}/users/${userId}/vessels`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

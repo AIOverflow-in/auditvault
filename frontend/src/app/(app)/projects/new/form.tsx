@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 import { PROJECT_TYPE_LABELS, PROJECT_TYPES } from '@/lib/labels';
 
 export default function NewProjectForm({
@@ -26,7 +26,7 @@ export default function NewProjectForm({
     e.preventDefault();
     setError(null);
     start(async () => {
-      const res = await fetch(`${API_URL}/projects`, {
+      const res = await fetch(`${BROWSER_API_URL}/projects`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

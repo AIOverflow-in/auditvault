@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { Download, Upload, FileText } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 import { uploadProjectFile } from '@/lib/upload';
 import type { FileBrief, ProjectRow } from './projects-table';
 
@@ -56,7 +56,7 @@ export default function ReportCell({
   function downloadChip(f: FileBrief) {
     return (
       <a
-        href={`${API_URL}/projects/${project.id}/files/${f.id}/download`}
+        href={`${BROWSER_API_URL}/projects/${project.id}/files/${f.id}/download`}
         target="_blank"
         rel="noopener"
         className="inline-flex min-h-tap items-center gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 text-base font-semibold text-teal-800 hover:bg-teal-100"

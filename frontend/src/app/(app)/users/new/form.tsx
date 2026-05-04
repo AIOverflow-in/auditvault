@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 
 export type ClientWithVessels = {
   id: string;
@@ -96,7 +96,7 @@ export default function NewUserForm({
     if (isClientRole && vesselIds.length > 0) payload.vesselIds = vesselIds;
 
     start(async () => {
-      const res = await fetch(`${API_URL}/users`, {
+      const res = await fetch(`${BROWSER_API_URL}/users`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

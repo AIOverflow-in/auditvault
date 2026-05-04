@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Send } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 
 export type Note = {
   id: string;
@@ -33,7 +33,7 @@ export default function NotesPanel({
     if (!body.trim()) return;
     setError(null);
     start(async () => {
-      const res = await fetch(`${API_URL}/projects/${projectId}/notes`, {
+      const res = await fetch(`${BROWSER_API_URL}/projects/${projectId}/notes`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { Download, Upload, MessageSquare } from 'lucide-react';
-import { API_URL } from '@/lib/api';
+import { BROWSER_API_URL } from '@/lib/api';
 import { uploadProjectFile } from '@/lib/upload';
 import type { FileBrief, ProjectRow } from './projects-table';
 
@@ -49,7 +49,7 @@ export default function FeedbackCell({
           {feedback.map((r) => (
             <li key={r.id}>
               <a
-                href={`${API_URL}/projects/${project.id}/files/${r.id}/download`}
+                href={`${BROWSER_API_URL}/projects/${project.id}/files/${r.id}/download`}
                 target="_blank"
                 rel="noopener"
                 className="inline-flex min-h-tap items-center gap-2 rounded-lg border border-pink-200 bg-pink-50 px-3 text-base font-semibold text-pink-800 hover:bg-pink-100"

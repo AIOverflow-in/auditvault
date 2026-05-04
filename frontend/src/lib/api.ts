@@ -1,8 +1,17 @@
-// Typed thin wrapper around the Go API. Server components call this directly
-// (passing the JWT cookie via Next's cookies() helper); client components call
-// the same Go endpoints via fetch with credentials: 'include'.
+// Typed thin wrapper around the Go API.
+//
+// Two URLs intentionally:
+//   - API_URL is the absolute backend origin. Used by Next server components
+//     (lib/session.ts → fetchAPI) which run in Node and have direct access
+//     to the av_session cookie via Next's cookies() helper, so they attach
+//     it as Authorization: Bearer.
+//   - BROWSER_API_URL is a same-origin path that Vercel rewrites to API_URL.
+//     Used by every 'use client' component. Going same-origin is the only
+//     way the browser will send the av_session cookie (set on the Vercel
+//     domain) — without this we'd 401 every interactive action.
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
+export const BROWSER_API_URL = '/api/backend';
 export const SESSION_COOKIE = 'av_session';
 
 export class ApiError extends Error {
