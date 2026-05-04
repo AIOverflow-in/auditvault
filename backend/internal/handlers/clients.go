@@ -91,6 +91,16 @@ func (a *API) GetClient(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, http.StatusBadRequest, "invalid id")
 		return
 	}
+
+	// Per-tenant scoping for client users. Cross-tenant lookups return 404
+	// rather than 403 so they can't probe whether other client orgs exist.
+	c, _ := auth.FromContext(r.Context())
+	isClient := auth.IsClientRole(c.Role)
+	if isClient && c.OrganizationID.String() != db.UUIDString(id) {
+		httpx.WriteError(w, http.StatusNotFound, "not found")
+		return
+	}
+
 	org, err := a.DB.Queries.GetClientOrganizationDetail(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -101,11 +111,35 @@ func (a *API) GetClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vessels, err := a.DB.Queries.ListVesselsByOrg(r.Context(), id)
-	if err != nil {
-		httpx.WriteError(w, http.StatusInternalServerError, "vessels failed")
-		return
+	// For Nivyash users: every vessel in the client. For client users: only
+	// the vessels they have a grant on — listing ships they can't actually
+	// open is confusing and leaks slightly more topology than they need.
+	var vesselsList []sqlc.ListVesselsRow
+	if isClient {
+		rows, err := a.DB.Queries.ListAccessibleVesselsForUser(r.Context(), db.UUID(c.UserID))
+		if err != nil {
+			httpx.WriteError(w, http.StatusInternalServerError, "vessels failed")
+			return
+		}
+		// Filter to this client's org (the access query returns vessels
+		// across all orgs the user has grants on; for clients that's just
+		// their own, but be defensive).
+		for _, v := range rows {
+			if db.UUIDString(v.OrganizationID) == db.UUIDString(id) {
+				vesselsList = append(vesselsList, sqlc.ListVesselsRow(v))
+			}
+		}
+	} else {
+		rows, err := a.DB.Queries.ListVesselsByOrg(r.Context(), id)
+		if err != nil {
+			httpx.WriteError(w, http.StatusInternalServerError, "vessels failed")
+			return
+		}
+		for _, v := range rows {
+			vesselsList = append(vesselsList, sqlc.ListVesselsRow(v))
+		}
 	}
+
 	users, err := a.DB.Queries.ListUsersByOrg(r.Context(), id)
 	if err != nil {
 		httpx.WriteError(w, http.StatusInternalServerError, "users failed")
@@ -117,11 +151,11 @@ func (a *API) GetClient(w http.ResponseWriter, r *http.Request) {
 			ID:          db.UUIDString(org.ID),
 			Name:        org.Name,
 			Type:        org.Type,
-			VesselCount: len(vessels),
+			VesselCount: len(vesselsList),
 			UserCount:   len(users),
 		},
 	}
-	for _, v := range vessels {
+	for _, v := range vesselsList {
 		resp.Vessels = append(resp.Vessels, vesselDTO{
 			ID:               db.UUIDString(v.ID),
 			Name:             v.Name,

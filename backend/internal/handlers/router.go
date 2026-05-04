@@ -46,9 +46,13 @@ func (a *API) Mount(r chi.Router) {
 		r.Get("/auth/me", a.Me)
 
 		r.Route("/clients", func(r chi.Router) {
-			r.Use(auth.RequireAnyRole(auth.RoleAdmin, auth.RoleStaff))
-			r.Get("/", a.ListClients)
+			// Listing all clients and creating new ones stays Nivyash-only.
+			r.With(auth.RequireAnyRole(auth.RoleAdmin, auth.RoleStaff)).Get("/", a.ListClients)
 			r.With(auth.RequireAnyRole(auth.RoleAdmin)).Post("/", a.CreateClient)
+			// Client roles need this endpoint to land on their own company's
+			// page after the dashboard redirect. The handler enforces the
+			// per-tenant scope (404 cross-tenant) and filters vessels to
+			// only the user's granted ships.
 			r.Get("/{id}", a.GetClient)
 		})
 
