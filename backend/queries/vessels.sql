@@ -24,3 +24,13 @@ WHERE v.id = $1;
 INSERT INTO vessels (name, imo_number, flag, vessel_type, organization_id)
 VALUES ($1, $2, $3, $4, $5)
 RETURNING id, name, imo_number, flag, vessel_type, organization_id, created_at;
+
+-- name: GetVesselByNameInOrg :one
+-- Case-insensitive lookup used by the inline "Add ship" flow so re-typing
+-- an existing vessel name on the client view doesn't create a duplicate.
+SELECT v.id, v.name, v.imo_number, v.flag, v.vessel_type, v.organization_id, v.created_at,
+       o.name AS organization_name
+FROM vessels v
+JOIN organizations o ON o.id = v.organization_id
+WHERE v.organization_id = $1 AND lower(v.name) = lower($2)
+LIMIT 1;

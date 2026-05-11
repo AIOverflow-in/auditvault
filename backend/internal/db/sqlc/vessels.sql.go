@@ -81,6 +81,49 @@ func (q *Queries) GetVessel(ctx context.Context, id pgtype.UUID) (GetVesselRow, 
 	return i, err
 }
 
+const getVesselByNameInOrg = `-- name: GetVesselByNameInOrg :one
+SELECT v.id, v.name, v.imo_number, v.flag, v.vessel_type, v.organization_id, v.created_at,
+       o.name AS organization_name
+FROM vessels v
+JOIN organizations o ON o.id = v.organization_id
+WHERE v.organization_id = $1 AND lower(v.name) = lower($2)
+LIMIT 1
+`
+
+type GetVesselByNameInOrgParams struct {
+	OrganizationID pgtype.UUID
+	Lower          string
+}
+
+type GetVesselByNameInOrgRow struct {
+	ID               pgtype.UUID
+	Name             string
+	ImoNumber        *string
+	Flag             *string
+	VesselType       *string
+	OrganizationID   pgtype.UUID
+	CreatedAt        pgtype.Timestamptz
+	OrganizationName string
+}
+
+// Case-insensitive lookup used by the inline "Add ship" flow so re-typing
+// an existing vessel name on the client view doesn't create a duplicate.
+func (q *Queries) GetVesselByNameInOrg(ctx context.Context, arg GetVesselByNameInOrgParams) (GetVesselByNameInOrgRow, error) {
+	row := q.db.QueryRow(ctx, getVesselByNameInOrg, arg.OrganizationID, arg.Lower)
+	var i GetVesselByNameInOrgRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.ImoNumber,
+		&i.Flag,
+		&i.VesselType,
+		&i.OrganizationID,
+		&i.CreatedAt,
+		&i.OrganizationName,
+	)
+	return i, err
+}
+
 const listVessels = `-- name: ListVessels :many
 SELECT v.id, v.name, v.imo_number, v.flag, v.vessel_type, v.organization_id, v.created_at,
        o.name AS organization_name

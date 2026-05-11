@@ -10,6 +10,7 @@ import {
   Download,
   Eye,
   Maximize2,
+  Plus,
   Search,
   X,
 } from 'lucide-react';
@@ -18,6 +19,9 @@ import { BROWSER_API_URL } from '@/lib/api';
 import RemarksCell from './remarks-cell';
 import ReportCell from './report-cell';
 import FeedbackCell from './feedback-cell';
+import RegionCell from './region-cell';
+import ProposedDateCell from './proposed-date-cell';
+import DraftRow, { type ExistingShip } from './draft-row';
 
 export type FileBrief = {
   id: string;
@@ -64,16 +68,27 @@ type SortState = { col: SortColumn; dir: 'asc' | 'desc' };
 // that opens cleanly in Excel.
 export default function ProjectsTable({
   initialProjects,
+  clientId,
   clientName,
+  ships,
+  canEdit,
 }: {
   initialProjects: ProjectRow[];
+  clientId: string;
   clientName: string;
+  ships: ExistingShip[];
+  canEdit: boolean;
 }) {
   const router = useRouter();
   const [projects, setProjects] = useState(initialProjects);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortState>({ col: 'vesselName', dir: 'asc' });
   const [fullscreen, setFullscreen] = useState(false);
+  // Whether the inline "Add ship" draft row is open. One at a time.
+  const [draftOpen, setDraftOpen] = useState(false);
+  // Local copy of the ship list so newly-added vessels show up in the
+  // autocomplete immediately for the next "+ Add ship" row.
+  const [shipsList, setShipsList] = useState<ExistingShip[]>(ships);
 
   // Lock body scroll while the fullscreen modal is open and let Esc close it.
   useEffect(() => {
@@ -256,12 +271,32 @@ export default function ProjectsTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-navy-100">
-          {visible.length === 0 && (
+          {/* Inline draft row sits above all the real rows when open. */}
+          {draftOpen && (
+            <DraftRow
+              clientId={clientId}
+              shipsList={shipsList}
+              onSaved={(row) => {
+                setProjects((curr) => [row, ...curr]);
+                if (!shipsList.some((s) => s.id === row.vesselId)) {
+                  setShipsList((curr) => [...curr, { id: row.vesselId, name: row.vesselName }]);
+                }
+                setDraftOpen(false);
+                router.refresh();
+              }}
+              onCancel={() => setDraftOpen(false)}
+            />
+          )}
+          {visible.length === 0 && !draftOpen && (
             <tr>
               <td colSpan={12} className="px-6 py-12 text-center text-navy-700">
-                {search.trim()
-                  ? <>No rows match <span className="font-semibold text-navy-900">“{search}”</span>.</>
-                  : 'No projects yet. Use “New project” to add one.'}
+                {search.trim() ? (
+                  <>No rows match <span className="font-semibold text-navy-900">“{search}”</span>.</>
+                ) : canEdit ? (
+                  <>Click <span className="font-semibold text-navy-900">+ Add ship</span> above to start a new row.</>
+                ) : (
+                  'No projects yet.'
+                )}
               </td>
             </tr>
           )}
@@ -276,8 +311,20 @@ export default function ProjectsTable({
               <td className="px-4 py-3 text-navy-800">
                 {PROJECT_TYPE_LABELS[p.projectType] ?? p.projectType}
               </td>
-              <td className="px-4 py-3 text-navy-800">{p.region || '—'}</td>
-              <td className="whitespace-nowrap px-4 py-3 text-navy-800">{p.proposedDate || '—'}</td>
+              <td className="px-4 py-3 text-navy-800">
+                <RegionCell
+                  project={p}
+                  canEdit={canEdit}
+                  onChange={(region) => patchRow(p.id, { region })}
+                />
+              </td>
+              <td className="whitespace-nowrap px-4 py-3 text-navy-800">
+                <ProposedDateCell
+                  project={p}
+                  canEdit={canEdit}
+                  onChange={(proposedDate) => patchRow(p.id, { proposedDate })}
+                />
+              </td>
               <td className="px-4 py-3">
                 <label className="sr-only" htmlFor={`stage-${p.id}`}>Stage</label>
                 <select
@@ -373,6 +420,17 @@ export default function ProjectsTable({
           >
             <Maximize2 className="h-4 w-4" aria-hidden />
             <span>Full screen</span>
+          </button>
+        )}
+        {canEdit && !draftOpen && (
+          <button
+            type="button"
+            onClick={() => setDraftOpen(true)}
+            className="av-btn-primary"
+            title="Add a new audit row — fill in the ship and details right here"
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+            <span>Add ship</span>
           </button>
         )}
       </div>

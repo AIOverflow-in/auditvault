@@ -82,25 +82,21 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
               </span>
             </div>
           </div>
-          {/* Admin-only actions: clients can't add ships or open projects.
-              Nivyash staff get the action buttons. */}
-          {isNivyash && (
-            <div className="flex flex-wrap gap-3">
-              <Link href={`/vessels/new?clientId=${client.id}`} className="av-btn-secondary">
-                <Plus className="h-5 w-5" aria-hidden />
-                Add ship
-              </Link>
-              <Link href={`/projects/new?clientId=${client.id}`} className="av-btn-primary">
-                <Plus className="h-5 w-5" aria-hidden />
-                New project
-              </Link>
-            </div>
-          )}
+          {/* "+ Add ship" lives inside the table toolbar now — it opens an
+              inline draft row instead of navigating to a separate form.
+              The Captain's WhatsApp feedback was explicit: he wants to type
+              directly into the row, like Excel. */}
         </div>
       </header>
 
-      {/* Excel-replica table */}
-      <ProjectsTable initialProjects={projects} clientName={client.name} />
+      {/* Excel-replica table — inline add + inline edit live here. */}
+      <ProjectsTable
+        initialProjects={projects}
+        clientId={client.id}
+        clientName={client.name}
+        ships={client.vessels.map((v) => ({ id: v.id, name: v.name }))}
+        canEdit={isNivyash}
+      />
 
       {/* Ships panel */}
       <section className="av-card p-6">

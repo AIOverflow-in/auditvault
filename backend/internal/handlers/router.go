@@ -54,6 +54,10 @@ func (a *API) Mount(r chi.Router) {
 			// per-tenant scope (404 cross-tenant) and filters vessels to
 			// only the user's granted ships.
 			r.Get("/{id}", a.GetClient)
+			// Inline "Add ship" flow on /clients/[id] — admin/staff only.
+			// Creates the vessel (or reuses by name) and the project in one go.
+			r.With(auth.RequireAnyRole(auth.RoleAdmin, auth.RoleStaff)).
+				Post("/{id}/audit-rows", a.CreateClientAuditRow)
 		})
 
 		r.Route("/vessels", func(r chi.Router) {
